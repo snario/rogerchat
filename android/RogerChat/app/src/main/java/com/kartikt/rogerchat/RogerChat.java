@@ -75,7 +75,6 @@ public class RogerChat extends Activity {
     private Boolean[] online_people;
     private Context c;
 
-
     private static final int RECORDER_SAMPLERATE = 8000;
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
@@ -120,7 +119,7 @@ public class RogerChat extends Activity {
 
         Context context = RogerChat.this;
         final SharedPreferences sharedPref = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
-        String account = sharedPref.getString(USER_KEY, null);
+        final String account = sharedPref.getString(USER_KEY, null);
         if (account == null) {
 
             AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -262,7 +261,7 @@ public class RogerChat extends Activity {
 //                            fb.child("encoded").setValue(Base64.encodeToString(bytes, Base64.NO_WRAP));
 
                             doFileUpload();
-
+                            sendSoundBroadcast();
 
                             Log.i("encoded shit", Base64.encodeToString(bytes, Base64.NO_WRAP));
                         } catch (Exception e) {
@@ -315,7 +314,7 @@ public class RogerChat extends Activity {
                 online_people[i] = is_online;
 
                 String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
-                if(has_msg == "true") {
+                if(has_msg == "true" && account == names[i]) {
                     AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                     mgr.setStreamVolume(AudioManager.STREAM_MUSIC, 100, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
