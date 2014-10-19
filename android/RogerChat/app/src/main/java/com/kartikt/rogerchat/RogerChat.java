@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
@@ -40,8 +41,6 @@ import com.pkmmte.view.CircularImageView;
 
 public class RogerChat extends Activity {
 
-
-
     private Button startButton;
     private Button stopButton;
     private MediaRecorder mediaRecorder;
@@ -49,9 +48,13 @@ public class RogerChat extends Activity {
     private Firebase fb;
     private boolean isRecording =  false;
 
-    GridLayout gl;
-    FrameLayout[] people;
-    int item;
+    private ArrayList<CircularImageView> selectedPeople = new ArrayList<CircularImageView>();
+    private GridLayout gl;
+    private FrameLayout[] people;
+    private String[] names;
+
+    // list that contains whether or not a person is selected right now.
+    private Boolean[] hack_people;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,7 @@ public class RogerChat extends Activity {
          *      }
          */
 
-        Firebase fb_people = new Firebase("https://rogerchat.firebaseio.com/people");
+        final Firebase fb_people = new Firebase("https://rogerchat.firebaseio.com/people");
 
         /**
          * Step ( 2 )
@@ -89,11 +92,15 @@ public class RogerChat extends Activity {
 
         final Resources res = getResources();
         people = new FrameLayout[9];
+        hack_people = new Boolean[9];
+        names = new String[9];
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
         for (int i=0; i < 9; i++) {
+            names[i] = null;
+            hack_people[i] = false;
             people[i] = (FrameLayout)inflater.inflate(R.layout.people_button, null);
             people[i].setLayoutParams(new LayoutParams
                     (LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -111,12 +118,25 @@ public class RogerChat extends Activity {
                         // give it the proper img src
                         final CircularImageView img = (CircularImageView) people[i++].findViewWithTag("button");
                         Drawable new_bg;
+                        names[i] = child.child("name").getValue().toString();
                         try {
                             new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
                         } catch (IOException e) {
                             new_bg = res.getDrawable(R.drawable.ic_launcher);
                         }
                         img.setImageDrawable(new_bg);
+                        final int j = i - 1;
+                        img.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                hack_people[j] = !hack_people[j];
+                                if (hack_people[j]) {
+                                    img.setBorderColor(Color.rgb(233, 30, 99));//#e91e63
+                                } else {
+                                    img.setBorderColor(Color.GRAY);
+                                }
+                            }
+                        });
 
 
                         Log.d("d", child.child("picture_url").getValue().toString());
@@ -127,32 +147,6 @@ public class RogerChat extends Activity {
             @Override public void onCancelled(FirebaseError firebaseError) {}
         });
 
-        // assign the listener for touches
-//        img.setOnTouchListener(new View.OnTouchListener() {
-//            int pos = item;
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (img.isSelected()) {
-//                    img.setSelectorStrokeColor(Color.GREEN);
-//
-//                    Log.d("d", "red");
-//                    // TODO Kartik use the ID of the person.
-//                    // index is pos
-//                    // array is fb_people (FireBase)
-//                    // e.g., fb_people[x].name or wtv
-//                } else {
-//                    img.setSelectorStrokeColor(Color.RED);
-//
-//                    Log.d("d", "green");
-//                    // TODO Kartik use the ID of the person.
-//                    // index is pos
-//                    // array is fb_people (FireBase)
-//                    // e.g., fb_people[x].name or wtv
-//                }
-//                return false;
-//            }
-//        });
 
         /**
          * Step ( 4 )
@@ -199,6 +193,21 @@ public class RogerChat extends Activity {
             }
         });
 
+    }
+
+    /**
+     * Gets the names of those selected.
+     */
+    public ArrayList<String> getSelectedPeople () {
+        ArrayList<String> ret = new ArrayList<String>();
+        int i = 0;
+        for (Boolean hack : hack_people) {
+            if (hack) {
+                ret.add(names[i]);
+            }
+            i++;
+        }
+        return ret;
     }
 
     public static Drawable drawableFromUrl(String url) throws IOException {

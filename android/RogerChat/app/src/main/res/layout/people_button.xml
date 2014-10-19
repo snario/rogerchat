@@ -12,7 +12,8 @@
         android:src="@drawable/ic_action_tick"
         app:border_color="#fff"
         app:border="true"
-        app:border_width="2dp" />
+        android:clickable="true"
+        app:border_width="4dp" />
     <!--<at.markushi.ui.CircleButton-->
         <!--android:tag="button"-->
         <!--android:layout_width="95dip"-->
