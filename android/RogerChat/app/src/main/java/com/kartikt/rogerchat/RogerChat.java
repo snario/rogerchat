@@ -181,7 +181,7 @@ public class RogerChat extends Activity {
                         // give it the proper img src
                         final CircularImageView img = (CircularImageView) people[i++].findViewWithTag("button");
                         Drawable new_bg;
-                        names[i - 1] = child.child("name").getValue().toString();
+                        names[i - 1] = child.getName();
                         try {
                             new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
                         } catch (IOException e) {
@@ -256,13 +256,13 @@ public class RogerChat extends Activity {
 //                            fb.child("encoded").setValue(Base64.encodeToString(bytes, Base64.NO_WRAP));
 
                             doFileUpload();
+                            sendSoundBroadcast();
 
                             Log.i("encoded shit", Base64.encodeToString(bytes, Base64.NO_WRAP));
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.i("exception", e.toString());
                         }
-
 
                     }
 
@@ -337,9 +337,20 @@ public class RogerChat extends Activity {
             }
             i++;
         }
+        Log.d("test", ret.toString());
         return ret;
     }
 
+    /**
+     * Sets `people.<name>.has_message` to be true for all people getting a message.
+     */
+    public void sendSoundBroadcast() {
+        ArrayList<String> my_people = getSelectedPeople();
+        for (String receiver : my_people) {
+            Firebase me = new Firebase("https://rogerchat.firebaseio.com/people/" + receiver + "/has_message");
+            me.setValue(true);
+        }
+    }
 
 
     public static Drawable drawableFromUrl(String url) throws IOException {
