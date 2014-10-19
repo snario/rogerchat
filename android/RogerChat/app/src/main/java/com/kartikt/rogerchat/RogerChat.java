@@ -3,31 +3,20 @@ package com.kartikt.rogerchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import java.util.ArrayList;
 
 import at.markushi.ui.CircleButton;
-
-import java.security.MessageDigest;
-import java.util.ArrayList;
 
 public class RogerChat extends Activity {
 
@@ -49,8 +38,7 @@ public class RogerChat extends Activity {
          *          url:  '<something>.png'
          *      }
          */
-        Firebase.setAndroidContext(this);
-        Firebase rootRef = new Firebase("https://rogerchat.firebaseio.com/people");
+
         // Get a reference to our people
 
 
@@ -63,23 +51,7 @@ public class RogerChat extends Activity {
 
         people = new FrameLayout[9];
 
-        LayoutInflater inflater = (LayoutInflater)getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
-
-        // iterate over Firebase people
-        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Log.i("work", "work");
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    Toast.makeText(RogerChat.this, child.toString(), Toast.LENGTH_SHORT);
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i=0; i < 9; i++) {
             people[i] = (FrameLayout)inflater.inflate(R.layout.people_button, null);
