@@ -1,0 +1,413 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B3026D119F27C6D005A4B7B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3026D019F27C6D005A4B7B /* main.m */; };
+		1B3026D419F27C6D005A4B7B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3026D319F27C6D005A4B7B /* AppDelegate.m */; };
+		1B3026D619F27C6D005A4B7B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B3026D519F27C6D005A4B7B /* Images.xcassets */; };
+		1B3026D919F27C6D005A4B7B /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B3026D719F27C6D005A4B7B /* MainMenu.xib */; };
+		1B3026E519F27C6D005A4B7B /* RogerChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3026E419F27C6D005A4B7B /* RogerChatTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1B3026DF19F27C6D005A4B7B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1B3026C319F27C6D005A4B7B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B3026CA19F27C6D005A4B7B;
+			remoteInfo = RogerChat;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1B3026CB19F27C6D005A4B7B /* RogerChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RogerChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3026CF19F27C6D005A4B7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1B3026D019F27C6D005A4B7B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1B3026D219F27C6D005A4B7B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1B3026D319F27C6D005A4B7B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1B3026D519F27C6D005A4B7B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1B3026D819F27C6D005A4B7B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1B3026DE19F27C6D005A4B7B /* RogerChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RogerChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3026E319F27C6D005A4B7B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1B3026E419F27C6D005A4B7B /* RogerChatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RogerChatTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1B3026C819F27C6D005A4B7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1B3026DB19F27C6D005A4B7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1B3026C219F27C6D005A4B7B = {
+			isa = PBXGroup;
+			children = (
+				1B3026CD19F27C6D005A4B7B /* RogerChat */,
+				1B3026E119F27C6D005A4B7B /* RogerChatTests */,
+				1B3026CC19F27C6D005A4B7B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1B3026CC19F27C6D005A4B7B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1B3026CB19F27C6D005A4B7B /* RogerChat.app */,
+				1B3026DE19F27C6D005A4B7B /* RogerChatTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1B3026CD19F27C6D005A4B7B /* RogerChat */ = {
+			isa = PBXGroup;
+			children = (
+				1B3026D219F27C6D005A4B7B /* AppDelegate.h */,
+				1B3026D319F27C6D005A4B7B /* AppDelegate.m */,
+				1B3026D519F27C6D005A4B7B /* Images.xcassets */,
+				1B3026D719F27C6D005A4B7B /* MainMenu.xib */,
+				1B3026CE19F27C6D005A4B7B /* Supporting Files */,
+			);
+			path = RogerChat;
+			sourceTree = "<group>";
+		};
+		1B3026CE19F27C6D005A4B7B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1B3026CF19F27C6D005A4B7B /* Info.plist */,
+				1B3026D019F27C6D005A4B7B /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1B3026E119F27C6D005A4B7B /* RogerChatTests */ = {
+			isa = PBXGroup;
+			children = (
+				1B3026E419F27C6D005A4B7B /* RogerChatTests.m */,
+				1B3026E219F27C6D005A4B7B /* Supporting Files */,
+			);
+			path = RogerChatTests;
+			sourceTree = "<group>";
+		};
+		1B3026E219F27C6D005A4B7B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1B3026E319F27C6D005A4B7B /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1B3026CA19F27C6D005A4B7B /* RogerChat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B3026E819F27C6D005A4B7B /* Build configuration list for PBXNativeTarget "RogerChat" */;
+			buildPhases = (
+				1B3026C719F27C6D005A4B7B /* Sources */,
+				1B3026C819F27C6D005A4B7B /* Frameworks */,
+				1B3026C919F27C6D005A4B7B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RogerChat;
+			productName = RogerChat;
+			productReference = 1B3026CB19F27C6D005A4B7B /* RogerChat.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1B3026DD19F27C6D005A4B7B /* RogerChatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B3026EB19F27C6D005A4B7B /* Build configuration list for PBXNativeTarget "RogerChatTests" */;
+			buildPhases = (
+				1B3026DA19F27C6D005A4B7B /* Sources */,
+				1B3026DB19F27C6D005A4B7B /* Frameworks */,
+				1B3026DC19F27C6D005A4B7B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B3026E019F27C6D005A4B7B /* PBXTargetDependency */,
+			);
+			name = RogerChatTests;
+			productName = RogerChatTests;
+			productReference = 1B3026DE19F27C6D005A4B7B /* RogerChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1B3026C319F27C6D005A4B7B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = liam;
+				TargetAttributes = {
+					1B3026CA19F27C6D005A4B7B = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+					1B3026DD19F27C6D005A4B7B = {
+						CreatedOnToolsVersion = 6.0.1;
+						TestTargetID = 1B3026CA19F27C6D005A4B7B;
+					};
+				};
+			};
+			buildConfigurationList = 1B3026C619F27C6D005A4B7B /* Build configuration list for PBXProject "RogerChat" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1B3026C219F27C6D005A4B7B;
+			productRefGroup = 1B3026CC19F27C6D005A4B7B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1B3026CA19F27C6D005A4B7B /* RogerChat */,
+				1B3026DD19F27C6D005A4B7B /* RogerChatTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1B3026C919F27C6D005A4B7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B3026D619F27C6D005A4B7B /* Images.xcassets in Resources */,
+				1B3026D919F27C6D005A4B7B /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1B3026DC19F27C6D005A4B7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1B3026C719F27C6D005A4B7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B3026D419F27C6D005A4B7B /* AppDelegate.m in Sources */,
+				1B3026D119F27C6D005A4B7B /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1B3026DA19F27C6D005A4B7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B3026E519F27C6D005A4B7B /* RogerChatTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1B3026E019F27C6D005A4B7B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B3026CA19F27C6D005A4B7B /* RogerChat */;
+			targetProxy = 1B3026DF19F27C6D005A4B7B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1B3026D719F27C6D005A4B7B /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1B3026D819F27C6D005A4B7B /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1B3026E619F27C6D005A4B7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1B3026E719F27C6D005A4B7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1B3026E919F27C6D005A4B7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = RogerChat/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1B3026EA19F27C6D005A4B7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = RogerChat/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1B3026EC19F27C6D005A4B7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = RogerChatTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RogerChat.app/Contents/MacOS/RogerChat";
+			};
+			name = Debug;
+		};
+		1B3026ED19F27C6D005A4B7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = RogerChatTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RogerChat.app/Contents/MacOS/RogerChat";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1B3026C619F27C6D005A4B7B /* Build configuration list for PBXProject "RogerChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B3026E619F27C6D005A4B7B /* Debug */,
+				1B3026E719F27C6D005A4B7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1B3026E819F27C6D005A4B7B /* Build configuration list for PBXNativeTarget "RogerChat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B3026E919F27C6D005A4B7B /* Debug */,
+				1B3026EA19F27C6D005A4B7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		1B3026EB19F27C6D005A4B7B /* Build configuration list for PBXNativeTarget "RogerChatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B3026EC19F27C6D005A4B7B /* Debug */,
+				1B3026ED19F27C6D005A4B7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1B3026C319F27C6D005A4B7B /* Project object */;
+}

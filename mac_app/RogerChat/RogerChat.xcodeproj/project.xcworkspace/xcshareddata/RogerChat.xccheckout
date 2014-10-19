@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>9BBEE336-81B6-4E8A-9966-202F62F520FA</string>
+	<key>IDESourceControlProjectName</key>
+	<string>RogerChat</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B288E2F31EF1785FCBB0BBFB43A4BC05A2A4B611</key>
+		<string>github.com:snario/rogerchat.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>mac_app/RogerChat/RogerChat.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B288E2F31EF1785FCBB0BBFB43A4BC05A2A4B611</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:snario/rogerchat.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>B288E2F31EF1785FCBB0BBFB43A4BC05A2A4B611</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B288E2F31EF1785FCBB0BBFB43A4BC05A2A4B611</string>
+			<key>IDESourceControlWCCName</key>
+			<string>rogerchat</string>
+		</dict>
+	</array>
+</dict>
+</plist>

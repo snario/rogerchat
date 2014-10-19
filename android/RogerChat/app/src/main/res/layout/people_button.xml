@@ -1,0 +1,15 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_alignParentBottom="true" >
+    <at.markushi.ui.CircleButton
+        android:tag="button"
+        android:layout_width="95dip"
+        android:layout_height="95dip"
+        android:src="@drawable/ic_action_tick"
+        app:cb_color="#ff4892ff"
+        app:cb_pressedRingWidth="8dip" />
+</FrameLayout>
