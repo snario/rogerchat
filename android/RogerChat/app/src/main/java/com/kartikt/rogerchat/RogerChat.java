@@ -177,14 +177,12 @@ public class RogerChat extends Activity {
 
 
         // iterate over Firebase people
-        final String my_account = account;
         fb_people.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 int i = 0;
                 for (DataSnapshot child : snapshot.getChildren()) {
                     names[i] = child.getName();
-                    if (child.getName().equals(my_account)) continue;
                     if (i < 10) {
                         // give it the proper img src
                         final CircularImageView img = (CircularImageView) people[i++].findViewWithTag("button");
@@ -316,7 +314,7 @@ public class RogerChat extends Activity {
                 online_people[i] = is_online;
                 Log.d("index", dataSnapshot.child("idx").getValue().toString()  );
                 String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
-                if (has_msg == "true" && my_account != names[i]) {
+                if (has_msg == "true") {
                     AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                     mgr.setStreamVolume(AudioManager.STREAM_MUSIC, 100, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
