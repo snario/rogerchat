@@ -315,7 +315,7 @@ public class RogerChat extends Activity {
                 int i = Integer.parseInt(dataSnapshot.child("idx").getValue().toString());
                 Boolean is_online = Boolean.parseBoolean(online);
                 online_people[i] = is_online;
-                Log.d("index", dataSnapshot.child("idx").getValue().toString());
+                Log.d("index", dataSnapshot.child("idx").getValue().toString()  );
                 String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
                 if (has_msg == "true") {
                     AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
