@@ -13,8 +13,11 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -70,6 +73,7 @@ public class RogerChat extends Activity {
     private FrameLayout[] people;
     private String[] names;
     private Boolean[] online_people;
+    private Context c;
 
 
     private static final int RECORDER_SAMPLERATE = 8000;
@@ -90,6 +94,7 @@ public class RogerChat extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roger_chat);
 
+        c = this;
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -170,6 +175,7 @@ public class RogerChat extends Activity {
             people[i].setPadding(35, 30, 0, 30);
             gl.addView(people[i]);
         }
+
 
         // iterate over Firebase people
         fb_people.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -256,7 +262,7 @@ public class RogerChat extends Activity {
 //                            fb.child("encoded").setValue(Base64.encodeToString(bytes, Base64.NO_WRAP));
 
                             doFileUpload();
-                            sendSoundBroadcast();
+
 
                             Log.i("encoded shit", Base64.encodeToString(bytes, Base64.NO_WRAP));
                         } catch (Exception e) {
@@ -307,6 +313,20 @@ public class RogerChat extends Activity {
                 int i = Integer.parseInt(dataSnapshot.child("idx").getValue().toString());
                 Boolean is_online = Boolean.parseBoolean(online);
                 online_people[i] = is_online;
+
+                String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
+                if(has_msg == "true") {
+                    AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    mgr.setStreamVolume(AudioManager.STREAM_MUSIC, 100, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+
+                    MediaPlayer player =  MediaPlayer.create(c, Uri.parse("http://50.112.162.251/uploads/audio.mp3"));
+                    player.setLooping(false);
+                    player.setVolume(100,100);
+                    player.start();
+
+                    fb_people.child(names[i]).child("has_message").setValue(false);
+                }
+
                 if (!hack_people[i]) {
                     CircularImageView img = (CircularImageView) people[i].findViewWithTag("button");
                     if (is_online) {
