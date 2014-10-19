@@ -156,7 +156,7 @@ public class RogerChat extends Activity {
                         // give it the proper img src
                         final CircularImageView img = (CircularImageView) people[i++].findViewWithTag("button");
                         Drawable new_bg;
-                        names[i] = child.child("name").getValue().toString();
+                        names[i - 1] = child.child("name").getValue().toString();
                         try {
                             img.setBorderColor(Color.GRAY);
                             new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
