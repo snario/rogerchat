@@ -3,22 +3,37 @@ package com.kartikt.rogerchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 
+import com.firebase.client.Firebase;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import at.markushi.ui.CircleButton;
 
-public class RogerChat extends Activity {
+public class RogerChat extends Activity implements View.OnClickListener  {
+
+
+    private Button startButton;
+    private Button stopButton;
+    private MediaRecorder mediaRecorder;
+    private File audioFile;
+    private Firebase fb;
 
     GridLayout gl;
     FrameLayout[] people;
@@ -28,6 +43,26 @@ public class RogerChat extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roger_chat);
+
+        if(android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        Firebase.setAndroidContext(this);
+        fb = new Firebase("https://rogerchat.firebaseio.com/channel/bm");
+
+        startButton = (Button) findViewById(R.id.start);
+        startButton.setOnClickListener(this);
+        startButton.setText("start");
+
+        stopButton = (Button) findViewById(R.id.stop);
+        stopButton.setOnClickListener(this);
+        stopButton.setEnabled(false);
+        stopButton.setText("stop");
+
+        audioFile = new File(Environment.getExternalStorageDirectory(), "ground_control.mp4");
+
 
         /**
          * Step ( 1 )
@@ -127,4 +162,62 @@ public class RogerChat extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    private void resetRecorder() {
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setAudioEncodingBitRate(16);
+        mediaRecorder.setAudioSamplingRate(24000);
+        mediaRecorder.setOutputFile(audioFile.getAbsolutePath());
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.start:
+                mediaRecorder = new MediaRecorder();
+                resetRecorder();
+                mediaRecorder.start();
+                fb.setValue("its starting!");
+
+                startButton.setEnabled(false);
+                stopButton.setEnabled(true);
+                break;
+            case R.id.stop:
+                mediaRecorder.stop();
+                mediaRecorder.release();
+                mediaRecorder = null;
+
+                fb.setValue("its stopping!");
+
+                startButton.setEnabled(true);
+                stopButton.setEnabled(false);
+                break;
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mediaRecorder != null) {
+            mediaRecorder.stop();
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+    }
+
 }
