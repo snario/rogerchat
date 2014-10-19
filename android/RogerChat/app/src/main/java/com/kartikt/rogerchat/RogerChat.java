@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
@@ -20,6 +21,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Base64;
 import android.util.Log;
@@ -29,6 +31,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -119,7 +123,7 @@ public class RogerChat extends Activity {
 
         Context context = RogerChat.this;
         final SharedPreferences sharedPref = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
-        String account = sharedPref.getString(USER_KEY, null);
+        final String account = sharedPref.getString(USER_KEY, null);
         if (account == null) {
 
             AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -235,6 +239,7 @@ public class RogerChat extends Activity {
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
 
                     if(isRecording == true) {
+                        delay(1);
                         mediaRecorder.stop();
                         mediaRecorder.release();
                         mediaRecorder = null;
@@ -313,8 +318,10 @@ public class RogerChat extends Activity {
                 Boolean is_online = Boolean.parseBoolean(online);
                 online_people[i] = is_online;
                 Log.d("index", dataSnapshot.child("idx").getValue().toString()  );
+                Log.d("me", my_account  );
                 String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
-                if (has_msg == "true" && my_account == names[i]) {
+                if (has_msg.equals("true") && my_account.equals(names[i])) {
+                    Log.d("going", "going");
                     AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                     mgr.setStreamVolume(AudioManager.STREAM_MUSIC, 100, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
@@ -381,6 +388,22 @@ public class RogerChat extends Activity {
 
         x = BitmapFactory.decodeStream(input);
         return new BitmapDrawable(x);
+    }
+
+    public void delay(int seconds){
+        final long milliseconds = seconds * 1000;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("XXX");                 //add your code here
+                    }
+                }, milliseconds);
+            }
+        });
     }
 
     @Override
