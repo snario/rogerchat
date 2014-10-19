@@ -1,7 +1,11 @@
 package com.kartikt.rogerchat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -41,6 +46,9 @@ import com.pkmmte.view.CircularImageView;
 
 public class RogerChat extends Activity {
 
+    public static final String PREFS_KEY = "prefs";
+    public static final String USER_KEY = "username";
+
     private Button startButton;
     private Button stopButton;
     private MediaRecorder mediaRecorder;
@@ -60,6 +68,7 @@ public class RogerChat extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roger_chat);
+
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -82,6 +91,35 @@ public class RogerChat extends Activity {
          */
 
         final Firebase fb_people = new Firebase("https://rogerchat.firebaseio.com/people");
+
+        Context context = RogerChat.this;
+        final SharedPreferences sharedPref = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        String account = sharedPref.getString(USER_KEY, null);
+        if (account == null) {
+
+            AlertDialog.Builder builder= new AlertDialog.Builder(this);
+            LayoutInflater inflater= getLayoutInflater();
+            final View myView= inflater.inflate(R.layout.get_name, null);
+            builder.setTitle("About");
+            builder.setMessage("Enter account name:");
+            builder.setView(myView);
+            final EditText input = (EditText) myView.findViewById(R.id.get_name_edit);
+            builder.setCancelable(false)
+                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialogInterface, int i) {
+                           SharedPreferences.Editor edit = sharedPref.edit();
+                           edit.putString(USER_KEY, input.getText().toString());
+                           edit.commit();
+                       }
+                   });
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            Log.d("username", account);
+        }
+
+
 
         /**
          * Step ( 2 )
@@ -120,6 +158,7 @@ public class RogerChat extends Activity {
                         Drawable new_bg;
                         names[i] = child.child("name").getValue().toString();
                         try {
+                            img.setBorderColor(Color.GRAY);
                             new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
                         } catch (IOException e) {
                             new_bg = res.getDrawable(R.drawable.ic_launcher);
@@ -235,7 +274,8 @@ public class RogerChat extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent i = new Intent(getApplicationContext(), Settings.class);
+            startActivityForResult(i, 1);
         }
         return super.onOptionsItemSelected(item);
     }
