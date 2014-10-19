@@ -119,7 +119,7 @@ public class RogerChat extends Activity {
 
         Context context = RogerChat.this;
         final SharedPreferences sharedPref = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
-        final String account = sharedPref.getString(USER_KEY, null);
+        String account = sharedPref.getString(USER_KEY, null);
         if (account == null) {
 
             AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -177,16 +177,19 @@ public class RogerChat extends Activity {
 
 
         // iterate over Firebase people
+        final String my_account = account;
         fb_people.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 int i = 0;
                 for (DataSnapshot child : snapshot.getChildren()) {
+                    names[i] = child.getName();
+                    if (child.getName().equals(my_account)) continue;
                     if (i < 10) {
                         // give it the proper img src
                         final CircularImageView img = (CircularImageView) people[i++].findViewWithTag("button");
+
                         Drawable new_bg;
-                        names[i - 1] = child.getName();
                         try {
                             new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
                         } catch (IOException e) {
@@ -312,9 +315,9 @@ public class RogerChat extends Activity {
                 int i = Integer.parseInt(dataSnapshot.child("idx").getValue().toString());
                 Boolean is_online = Boolean.parseBoolean(online);
                 online_people[i] = is_online;
-
+                Log.d("index", dataSnapshot.child("idx").getValue().toString());
                 String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
-                if(has_msg == "true" && account == names[i]) {
+                if (has_msg == "true") {
                     AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                     mgr.setStreamVolume(AudioManager.STREAM_MUSIC, 100, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
