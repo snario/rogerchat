@@ -3,10 +3,16 @@ package com.kartikt.rogerchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,15 +24,22 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-import at.markushi.ui.CircleButton;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.pkmmte.view.CircularImageView;
+
 
 public class RogerChat extends Activity implements View.OnClickListener  {
+
 
 
     private Button startButton;
@@ -44,7 +57,7 @@ public class RogerChat extends Activity implements View.OnClickListener  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roger_chat);
 
-        if(android.os.Build.VERSION.SDK_INT > 9) {
+        if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
@@ -74,8 +87,7 @@ public class RogerChat extends Activity implements View.OnClickListener  {
          *      }
          */
 
-        // Get a reference to our people
-
+        Firebase fb_people = new Firebase("https://rogerchat.firebaseio.com/people");
 
         /**
          * Step ( 2 )
@@ -84,9 +96,11 @@ public class RogerChat extends Activity implements View.OnClickListener  {
          */
         gl = (GridLayout)findViewById(R.id.people);
 
+        final Resources res = getResources();
         people = new FrameLayout[9];
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 
         for (int i=0; i < 9; i++) {
             people[i] = (FrameLayout)inflater.inflate(R.layout.people_button, null);
@@ -96,25 +110,58 @@ public class RogerChat extends Activity implements View.OnClickListener  {
             gl.addView(people[i]);
         }
 
+        // iterate over Firebase people
+        fb_people.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                int i = 0;
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    if (i < 10) {
+                        // give it the proper img src
+                        final CircularImageView img = (CircularImageView) people[i++].findViewWithTag("button");
+                        Drawable new_bg;
+                        try {
+                            new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
+                        } catch (IOException e) {
+                            new_bg = res.getDrawable(R.drawable.ic_launcher);
+                        }
+                        img.setImageDrawable(new_bg);
 
-        /**
-         * Step ( 3 )
-         *
-         *     Set up event handlers when they click on one of these people.
-         *
-         */
-        for (item = 0; item < 9; item++) {
-            CircleButton b = (CircleButton) people[item].findViewWithTag("button");
-            b.setOnClickListener(new View.OnClickListener() {
-                int pos = item;
-                public void onClick(View v) {
-                    // TODO Kartik use the ID of the person.
-                    // index is pos
-                    // array is fb_people (FireBase)
-                    // e.g., fb_people[x].name or wtv
+
+                        Log.d("d", child.child("picture_url").getValue().toString());
+                    }
                 }
-            });
-        }
+            }
+
+            @Override public void onCancelled(FirebaseError firebaseError) {}
+        });
+
+        // assign the listener for touches
+//        img.setOnTouchListener(new View.OnTouchListener() {
+//            int pos = item;
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (img.isSelected()) {
+//                    img.setSelectorStrokeColor(Color.GREEN);
+//
+//                    Log.d("d", "red");
+//                    // TODO Kartik use the ID of the person.
+//                    // index is pos
+//                    // array is fb_people (FireBase)
+//                    // e.g., fb_people[x].name or wtv
+//                } else {
+//                    img.setSelectorStrokeColor(Color.RED);
+//
+//                    Log.d("d", "green");
+//                    // TODO Kartik use the ID of the person.
+//                    // index is pos
+//                    // array is fb_people (FireBase)
+//                    // e.g., fb_people[x].name or wtv
+//                }
+//                return false;
+//            }
+//        });
 
         /**
          * Step ( 4 )
@@ -122,7 +169,6 @@ public class RogerChat extends Activity implements View.OnClickListener  {
          *     Make the record button fucking amazing (aka copy Google)
          *
          */
-        final Resources res = getResources();
         final ImageButton mic = (ImageButton) this.findViewById(R.id.mic);
         mic.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -140,8 +186,15 @@ public class RogerChat extends Activity implements View.OnClickListener  {
 
     }
 
-    public static ArrayList<String> hardCodedData () {
-        return new ArrayList<String>();
+    public static Drawable drawableFromUrl(String url) throws IOException {
+        Bitmap x;
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
+
+        x = BitmapFactory.decodeStream(input);
+        return new BitmapDrawable(x);
     }
 
     @Override
