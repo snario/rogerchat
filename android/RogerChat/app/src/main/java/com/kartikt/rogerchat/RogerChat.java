@@ -306,7 +306,6 @@ public class RogerChat extends Activity {
          *
          *     Have online offline checks.
          */
-
         fb_people.addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -317,7 +316,7 @@ public class RogerChat extends Activity {
                 online_people[i] = is_online;
                 Log.d("index", dataSnapshot.child("idx").getValue().toString()  );
                 String has_msg = dataSnapshot.child("has_message").getValue().toString().toLowerCase();
-                if (has_msg == "true") {
+                if (has_msg == "true" && my_account != names[i]) {
                     AudioManager mgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                     mgr.setStreamVolume(AudioManager.STREAM_MUSIC, 100, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
