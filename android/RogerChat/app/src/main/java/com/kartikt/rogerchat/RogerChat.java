@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
@@ -60,6 +62,7 @@ public class RogerChat extends Activity {
     private GridLayout gl;
     private FrameLayout[] people;
     private String[] names;
+    private Boolean[] online_people;
 
     // list that contains whether or not a person is selected right now.
     private Boolean[] hack_people;
@@ -116,6 +119,8 @@ public class RogerChat extends Activity {
             AlertDialog alert = builder.create();
             alert.show();
         } else {
+            Firebase me = new Firebase("https://rogerchat.firebaseio.com/people/" + account + "/online");
+            me.setValue(true);
             Log.d("username", account);
         }
 
@@ -132,6 +137,7 @@ public class RogerChat extends Activity {
         people = new FrameLayout[9];
         hack_people = new Boolean[9];
         names = new String[9];
+        online_people = new Boolean[9];
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -139,6 +145,7 @@ public class RogerChat extends Activity {
         for (int i=0; i < 9; i++) {
             names[i] = null;
             hack_people[i] = false;
+            online_people[i] = false;
             people[i] = (FrameLayout)inflater.inflate(R.layout.people_button, null);
             people[i].setLayoutParams(new LayoutParams
                     (LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -158,13 +165,13 @@ public class RogerChat extends Activity {
                         Drawable new_bg;
                         names[i - 1] = child.child("name").getValue().toString();
                         try {
-                            img.setBorderColor(Color.GRAY);
                             new_bg = drawableFromUrl(child.child("picture_url").getValue().toString());
                         } catch (IOException e) {
                             new_bg = res.getDrawable(R.drawable.ic_launcher);
                         }
                         img.setImageDrawable(new_bg);
                         final int j = i - 1;
+                        final Boolean online = (Boolean) child.child("online").getValue();
                         img.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -172,7 +179,11 @@ public class RogerChat extends Activity {
                                 if (hack_people[j]) {
                                     img.setBorderColor(Color.rgb(233, 30, 99));//#e91e63
                                 } else {
-                                    img.setBorderColor(Color.GRAY);
+                                    if (!online) {
+                                        img.setBorderColor(Color.GRAY);
+                                    } else {
+                                        img.setBorderColor(Color.GREEN);
+                                    }
                                 }
                             }
                         });
@@ -232,6 +243,36 @@ public class RogerChat extends Activity {
             }
         });
 
+        /**
+         * Step ( 6 )
+         *
+         *     Have online offline checks.
+         */
+
+        fb_people.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String online = dataSnapshot.child("online").getValue().toString();
+                int i = Integer.parseInt(dataSnapshot.child("idx").getValue().toString());
+                Boolean is_online = Boolean.parseBoolean(online);
+                online_people[i] = is_online;
+                if (!hack_people[i]) {
+                    CircularImageView img = (CircularImageView) people[i].findViewWithTag("button");
+                    if (is_online) {
+                        img.setBorderColor(Color.GREEN);
+                    } else {
+                        img.setBorderColor(Color.GRAY);
+                    }
+                }
+            }
+
+            @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
+            @Override public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            @Override public void onCancelled(FirebaseError firebaseError) {}
+        });
+
     }
 
     /**
@@ -248,6 +289,8 @@ public class RogerChat extends Activity {
         }
         return ret;
     }
+
+
 
     public static Drawable drawableFromUrl(String url) throws IOException {
         Bitmap x;
@@ -299,14 +342,27 @@ public class RogerChat extends Activity {
         }
     }
 
+    @Override
+    protected void onResume () {
+        super.onResume();
+        final SharedPreferences sharedPref = RogerChat.this.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        String account = sharedPref.getString(USER_KEY, null);
+        Firebase me = new Firebase("https://rogerchat.firebaseio.com/people/" +account+"/online");
+        me.setValue(true);
+
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
+        final SharedPreferences sharedPref = RogerChat.this.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        String account = sharedPref.getString(USER_KEY, null);
+        Firebase me = new Firebase("https://rogerchat.firebaseio.com/people/" +account+"/online");
+        me.setValue(false);
 
         if (mediaRecorder != null) {
-            mediaRecorder.stop();
             mediaRecorder.release();
+            mediaRecorder.stop();
             mediaRecorder = null;
         }
     }

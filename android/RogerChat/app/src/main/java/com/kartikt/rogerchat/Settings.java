@@ -1,6 +1,8 @@
 package com.kartikt.rogerchat;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,35 +25,20 @@ import java.io.IOException;
 public class Settings extends Activity
 {
 
+    public static final String PREFS_KEY = "prefs";
+    public static final String USER_KEY = "username";
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
 
-        /**
-         * Step ( 1 )
-         *
-         *      Get all the data from Firebase on people.
-         */
+        final SharedPreferences sharedPref = this.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        String account = sharedPref.getString(USER_KEY, null);
+        Firebase me = new Firebase("https://rogerchat.firebaseio.com/people/" +account+"/online");
 
-        final Firebase fb_people = new Firebase("https://rogerchat.firebaseio.com/people");
 
-        fb_people.addChildEventListener(new ChildEventListener() {
-            @Override public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                }
-            }
-
-            @Override public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-            @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override public void onCancelled(FirebaseError firebaseError) {}
-        });
 
     }
 
