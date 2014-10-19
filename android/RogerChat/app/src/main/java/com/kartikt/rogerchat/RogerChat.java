@@ -264,7 +264,6 @@ public class RogerChat extends Activity {
                             doFileUpload();
                             sendSoundBroadcast();
 
-                            Log.i("encoded shit", Base64.encodeToString(bytes, Base64.NO_WRAP));
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.i("exception", e.toString());
