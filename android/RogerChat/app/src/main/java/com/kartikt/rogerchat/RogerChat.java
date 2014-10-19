@@ -46,6 +46,13 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.pkmmte.view.CircularImageView;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -275,9 +282,13 @@ public class RogerChat extends Activity {
                                     handler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            sendSoundBroadcast();
+                                            try {
+                                                sendSoundBroadcast();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }, 1000);
+                                    }, 300);
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -382,11 +393,39 @@ public class RogerChat extends Activity {
     /**
      * Sets `people.<name>.has_message` to be true for all people getting a message.
      */
-    public void sendSoundBroadcast() {
+    public void sendSoundBroadcast() throws IOException {
         ArrayList<String> my_people = getSelectedPeople();
+        final SharedPreferences sharedPref = RogerChat.this.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        String account = sharedPref.getString(USER_KEY, null);
         for (String receiver : my_people) {
             Firebase me = new Firebase("https://rogerchat.firebaseio.com/people/" + receiver + "/has_message");
             me.setValue(true);
+
+        }
+
+        String URL = "http://50.112.162.251:8080/transcribe?text=story&username=" +account;
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response = httpclient.execute(new HttpGet(URL));
+        StatusLine statusLine = response.getStatusLine();
+        if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+            try {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                response.getEntity().writeTo(out);
+                out.close();
+                String responseString = out.toString();
+                Log.i("dsf", responseString);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //..more logic
+        } else{
+            //Closes the connection.
+            try {
+                response.getEntity().getContent().close();
+                throw new IOException(statusLine.getReasonPhrase());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
