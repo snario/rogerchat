@@ -239,41 +239,53 @@ public class RogerChat extends Activity {
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
 
                     if(isRecording == true) {
-                        delay(1);
-                        mediaRecorder.stop();
-                        mediaRecorder.release();
-                        mediaRecorder = null;
-                        isRecording = false;
-                        Log.i("touch", "stopping and saving");
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                mediaRecorder.stop();
+                                mediaRecorder.release();
+                                mediaRecorder = null;
+                                isRecording = false;
+                                Log.i("touch", "stopping and saving");
 
 
-                        try {
-                            InputStream inputStream = new FileInputStream(audioFile.getAbsolutePath());//You can get an inputStream using any IO API
-                            byte[] bytes;
-                            byte[] buffer = new byte[8192];
-                            int bytesRead;
-                            ByteArrayOutputStream output = new ByteArrayOutputStream();
-                            try {
-                                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                    output.write(buffer, 0, bytesRead);
+                                try {
+                                    InputStream inputStream = new FileInputStream(audioFile.getAbsolutePath());//You can get an inputStream using any IO API
+                                    byte[] bytes;
+                                    byte[] buffer = new byte[8192];
+                                    int bytesRead;
+                                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                                    try {
+                                        while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                            output.write(buffer, 0, bytesRead);
 //                                    Log.i("writer", buffer.toString());
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
 
-                            bytes = output.toByteArray();
+                                    bytes = output.toByteArray();
 
 //                            fb.child("encoded").setValue(Base64.encodeToString(bytes, Base64.NO_WRAP));
 
-                            doFileUpload();
-                            sendSoundBroadcast();
+                                    doFileUpload();
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            sendSoundBroadcast();
+                                        }
+                                    }, 1000);
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.i("exception", e.toString());
-                        }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Log.i("exception", e.toString());
+                                }
 
+                            }
+                        }, 300);
                     }
 
                     mic.setImageDrawable(res.getDrawable(R.drawable.ic_mic_grey));
@@ -485,7 +497,10 @@ public class RogerChat extends Activity {
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
         String responseFromServer = "";
-        String urlString = "http://50.112.162.251/";
+        Context context = RogerChat.this;
+        final SharedPreferences sharedPref = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        final String account = sharedPref.getString(USER_KEY, null);
+        String urlString = "http://50.112.162.251/index.php?username=" + account;
 
         try {
 

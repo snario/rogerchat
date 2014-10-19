@@ -20,7 +20,7 @@ var main = function(){
 
   console.log('firebase!');
 
-  var myFirebaseRef = new Firebase("https://rogerchat.firebaseio.com/people/kartikt");
+  var myFirebaseRef = new Firebase("https://rogerchat.firebaseio.com/people/lihorne");
   var display_toolbar = function() {
     var html  = '<div class="groundControl"><style>#base { position: fixed; top: 1em; right: 1em;z-index: 50000;} #corner {width:200px;height:100px;float: left;margin: -40px 30px 1px 1px;}';
         html += '</style><div id="base"><div id="corner"><img src="http://i.imgur.com/LKVIfqG.gif"><audio id="groundControlAudio" autoplay=""><source src="http://50.112.162.251/uploads/audio.mp3" type="audio/mp3">Your browser does not support the audio element.</audio></div></div></div>';
