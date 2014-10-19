@@ -12,10 +12,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,18 +35,23 @@ import android.widget.ImageButton;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Map;
-
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.pkmmte.view.CircularImageView;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 
 public class RogerChat extends Activity {
@@ -56,13 +64,23 @@ public class RogerChat extends Activity {
     private MediaRecorder mediaRecorder;
     private File audioFile;
     private Firebase fb;
-    private boolean isRecording =  false;
 
     private ArrayList<CircularImageView> selectedPeople = new ArrayList<CircularImageView>();
     private GridLayout gl;
     private FrameLayout[] people;
     private String[] names;
     private Boolean[] online_people;
+
+
+    private static final int RECORDER_SAMPLERATE = 8000;
+    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+    private AudioRecord recorder = null;
+    private Thread recordingThread = null;
+    private boolean isRecording = false;
+    int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
+    int BytesPerElement = 2; // 2 bytes in 16bit format
+
 
     // list that contains whether or not a person is selected right now.
     private Boolean[] hack_people;
@@ -81,7 +99,7 @@ public class RogerChat extends Activity {
         Firebase.setAndroidContext(this);
         fb = new Firebase("https://rogerchat.firebaseio.com/channel/bm");
         audioFile = new File(Environment.getExternalStorageDirectory(), "ground_control.mp4");
-
+        int bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 
         /**
          * Step ( 1 )
@@ -139,7 +157,7 @@ public class RogerChat extends Activity {
         names = new String[9];
         online_people = new Boolean[9];
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
         for (int i=0; i < 9; i++) {
@@ -216,11 +234,41 @@ public class RogerChat extends Activity {
                         mediaRecorder = null;
                         isRecording = false;
                         Log.i("touch", "stopping and saving");
+
+
+                        try {
+                            InputStream inputStream = new FileInputStream(audioFile.getAbsolutePath());//You can get an inputStream using any IO API
+                            byte[] bytes;
+                            byte[] buffer = new byte[8192];
+                            int bytesRead;
+                            ByteArrayOutputStream output = new ByteArrayOutputStream();
+                            try {
+                                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                    output.write(buffer, 0, bytesRead);
+//                                    Log.i("writer", buffer.toString());
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            bytes = output.toByteArray();
+
+//                            fb.child("encoded").setValue(Base64.encodeToString(bytes, Base64.NO_WRAP));
+
+                            doFileUpload();
+
+                            Log.i("encoded shit", Base64.encodeToString(bytes, Base64.NO_WRAP));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.i("exception", e.toString());
+                        }
+
+
                     }
 
                     mic.setImageDrawable(res.getDrawable(R.drawable.ic_mic_grey));
                     mic.setBackground(res.getDrawable(R.drawable.round_button));
-                    fb.setValue("its stopping!");
+                    fb.child("status").setValue("its stopping!");
                     Log.i("touch", "stopping");
                 } else {
 
@@ -233,6 +281,8 @@ public class RogerChat extends Activity {
                         resetRecorder();
                         mediaRecorder.start();
                         isRecording = true;
+
+                        fb.child("status").setValue("its starting!");
                     }
 
                     mic.setImageDrawable(res.getDrawable(R.drawable.ic_mic_white));
@@ -364,6 +414,239 @@ public class RogerChat extends Activity {
             mediaRecorder.release();
             mediaRecorder.stop();
             mediaRecorder = null;
+        }
+    }
+
+
+
+    private void doFileUpload() {
+
+        HttpURLConnection conn = null;
+        DataOutputStream dos = null;
+        DataInputStream inStream = null;
+        String existingFileName = audioFile.getAbsolutePath();
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
+        String responseFromServer = "";
+        String urlString = "http://50.112.162.251/";
+
+        try {
+
+            //------------------ CLIENT REQUEST
+            FileInputStream fileInputStream = new FileInputStream(new File(existingFileName));
+            // open a URL connection to the Servlet
+            URL url = new URL(urlString);
+            // Open a HTTP connection to the URL
+            conn = (HttpURLConnection) url.openConnection();
+            // Allow Inputs
+            conn.setDoInput(true);
+            // Allow Outputs
+            conn.setDoOutput(true);
+            // Don't use a cached copy.
+            conn.setUseCaches(false);
+            // Use a post method.
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + existingFileName + "\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            // create a buffer of maximum size
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+            // read file and write it into form...
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+            while (bytesRead > 0) {
+
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+            }
+
+            // send multipart form data necesssary after file data...
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+            // close streams
+            Log.e("Debug", "File is written");
+            fileInputStream.close();
+            dos.flush();
+            dos.close();
+
+        } catch (MalformedURLException ex) {
+            Log.e("Debug", "error: " + ex.getMessage(), ex);
+        } catch (IOException ioe) {
+            Log.e("Debug", "error: " + ioe.getMessage(), ioe);
+        }
+
+        //------------------ read the SERVER RESPONSE
+        try {
+
+            inStream = new DataInputStream(conn.getInputStream());
+            String str;
+
+            while ((str = inStream.readLine()) != null) {
+
+                Log.e("Debug", "Server Response " + str);
+
+            }
+
+            inStream.close();
+
+        } catch (IOException ioex) {
+            Log.e("Debug", "error: " + ioex.getMessage(), ioex);
+        }
+    }
+
+
+    public byte[] readByte(File file) throws IOException{
+
+        ByteArrayOutputStream ous = null;
+        InputStream ios = null;
+        try {
+            byte[] buffer = new byte[4096];
+            ous = new ByteArrayOutputStream();
+            ios = new FileInputStream(file);
+            int read = 0;
+            while ( (read = ios.read(buffer)) != -1 ) {
+                ous.write(buffer, 0, read);
+            }
+        } finally {
+            try {
+                if ( ous != null )
+                    ous.close();
+            } catch ( IOException e) {
+            }
+
+            try {
+                if ( ios != null )
+                    ios.close();
+            } catch ( IOException e) {
+            }
+        }
+        return ous.toByteArray();
+    }
+
+
+
+//    public void PCMtoFile() throws IOException {
+//        byte[] header = new byte[44];
+//        byte[] data = readByte(audioFile);
+//
+//        OutputStream os = new FileOutputStream("/sdcard/wav.wav");
+//
+//        byte[] byteData = null;
+//        long totalDataLen = data.length + 36;
+//        int srate = 8000;
+//        int channel = AudioFormat.CHANNEL_IN_STEREO;
+//        int format = AudioFormat.ENCODING_PCM_16BIT;
+//        long bitrate = 8000 * AudioFormat.CHANNEL_IN_STEREO * AudioFormat.ENCODING_PCM_16BIT;
+////        long bitrate = srate * channel * format;
+//
+//        header[0] = 'R';
+//        header[1] = 'I';
+//        header[2] = 'F';
+//        header[3] = 'F';
+//        header[4] = (byte) (totalDataLen & 0xff);
+//        header[5] = (byte) ((totalDataLen >> 8) & 0xff);
+//        header[6] = (byte) ((totalDataLen >> 16) & 0xff);
+//        header[7] = (byte) ((totalDataLen >> 24) & 0xff);
+//        header[8] = 'W';
+//        header[9] = 'A';
+//        header[10] = 'V';
+//        header[11] = 'E';
+//        header[12] = 'f';
+//        header[13] = 'm';
+//        header[14] = 't';
+//        header[15] = ' ';
+//        header[16] = (byte) format;
+//        header[17] = 0;
+//        header[18] = 0;
+//        header[19] = 0;
+//        header[20] = 1;
+//        header[21] = 0;
+//        header[22] = (byte) channel;
+//        header[23] = 0;
+//        header[24] = (byte) (srate & 0xff);
+//        header[25] = (byte) ((srate >> 8) & 0xff);
+//        header[26] = (byte) ((srate >> 16) & 0xff);
+//        header[27] = (byte) ((srate >> 24) & 0xff);
+//        header[28] = (byte) ((bitrate / 8) & 0xff);
+//        header[29] = (byte) (((bitrate / 8) >> 8) & 0xff);
+//        header[30] = (byte) (((bitrate / 8) >> 16) & 0xff);
+//        header[31] = (byte) (((bitrate / 8) >> 24) & 0xff);
+//        header[32] = (byte) ((channel * format) / 8);
+//        header[33] = 0;
+//        header[34] = 16;
+//        header[35] = 0;
+//        header[36] = 'd';
+//        header[37] = 'a';
+//        header[38] = 't';
+//        header[39] = 'a';
+//        header[40] = (byte) (data.length  & 0xff);
+//        header[41] = (byte) ((data.length >> 8) & 0xff);
+//        header[42] = (byte) ((data.length >> 16) & 0xff);
+//        header[43] = (byte) ((data.length >> 24) & 0xff);
+//
+//        Log.i("Work", "PLZ PLZP PLZ");
+//        os.write(header, 0, 44);
+//        os.write(data);
+//        os.close();
+//    }
+
+
+
+    private byte[] short2byte(short[] sData) {
+        int shortArrsize = sData.length;
+        byte[] bytes = new byte[shortArrsize * 2];
+        for (int i = 0; i < shortArrsize; i++) {
+            bytes[i * 2] = (byte) (sData[i] & 0x00FF);
+            bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+            sData[i] = 0;
+        }
+        return bytes;
+
+    }
+
+    private void writeAudioDataToFile() {
+        // Write the output audio in byte
+
+        String filePath = "/sdcard/ground_control.mp4";
+        short sData[] = new short[BufferElements2Rec];
+
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(filePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        while (isRecording) {
+            // gets the voice output from microphone to byte format
+
+            recorder.read(sData, 0, BufferElements2Rec);
+            System.out.println("Short wirting to file" + sData.toString());
+            try {
+                // // writes the data to file from buffer
+                // // stores the voice buffer
+                byte bData[] = short2byte(sData);
+                os.write(bData, 0, BufferElements2Rec * BytesPerElement);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
