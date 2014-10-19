@@ -38,7 +38,7 @@ import com.firebase.client.ValueEventListener;
 import com.pkmmte.view.CircularImageView;
 
 
-public class RogerChat extends Activity implements View.OnClickListener  {
+public class RogerChat extends Activity {
 
 
 
@@ -47,6 +47,7 @@ public class RogerChat extends Activity implements View.OnClickListener  {
     private MediaRecorder mediaRecorder;
     private File audioFile;
     private Firebase fb;
+    private boolean isRecording =  false;
 
     GridLayout gl;
     FrameLayout[] people;
@@ -64,16 +65,6 @@ public class RogerChat extends Activity implements View.OnClickListener  {
 
         Firebase.setAndroidContext(this);
         fb = new Firebase("https://rogerchat.firebaseio.com/channel/bm");
-
-        startButton = (Button) findViewById(R.id.start);
-        startButton.setOnClickListener(this);
-        startButton.setText("start");
-
-        stopButton = (Button) findViewById(R.id.stop);
-        stopButton.setOnClickListener(this);
-        stopButton.setEnabled(false);
-        stopButton.setText("stop");
-
         audioFile = new File(Environment.getExternalStorageDirectory(), "ground_control.mp4");
 
 
@@ -174,11 +165,35 @@ public class RogerChat extends Activity implements View.OnClickListener  {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+
+                    if(isRecording == true) {
+                        mediaRecorder.stop();
+                        mediaRecorder.release();
+                        mediaRecorder = null;
+                        isRecording = false;
+                        Log.i("touch", "stopping and saving");
+                    }
+
                     mic.setImageDrawable(res.getDrawable(R.drawable.ic_mic_grey));
                     mic.setBackground(res.getDrawable(R.drawable.round_button));
+                    fb.setValue("its stopping!");
+                    Log.i("touch", "stopping");
                 } else {
+
+                    if(isRecording == false) {
+                        if(mediaRecorder == null) {
+                            mediaRecorder = new MediaRecorder();
+                        }
+
+                        Log.i("touch", "starting to record");
+                        resetRecorder();
+                        mediaRecorder.start();
+                        isRecording = true;
+                    }
+
                     mic.setImageDrawable(res.getDrawable(R.drawable.ic_mic_white));
                     mic.setBackground(res.getDrawable(R.drawable.round_button_red));
+
                 }
                 return false;
             }
@@ -232,32 +247,6 @@ public class RogerChat extends Activity implements View.OnClickListener  {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.start:
-                mediaRecorder = new MediaRecorder();
-                resetRecorder();
-                mediaRecorder.start();
-                fb.setValue("its starting!");
-
-                startButton.setEnabled(false);
-                stopButton.setEnabled(true);
-                break;
-            case R.id.stop:
-                mediaRecorder.stop();
-                mediaRecorder.release();
-                mediaRecorder = null;
-
-                fb.setValue("its stopping!");
-
-                startButton.setEnabled(true);
-                stopButton.setEnabled(false);
-                break;
         }
     }
 
